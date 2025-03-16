@@ -74,3 +74,9 @@ python3 ytdl.py
 ```
 
 > Kalo di Windows ga usah pake angka 3 langsung aja `python ytdl.py`
+
+## Demonstrasi
+
+Untuk video demonstrasinya ada di YT.
+
+Link: [https://youtu.be/nOCxZs9HdjQ?si=EDMK8xyoBnH03up_](https://youtu.be/nOCxZs9HdjQ?si=EDMK8xyoBnH03up_)
