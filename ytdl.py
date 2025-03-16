@@ -22,7 +22,7 @@ banner = """
         ╚████╔╝    ██║   ██║  ██║██║
          ╚██╔╝     ██║   ██║  ██║██║
           ██║      ██║   ██████╔╝███████╗
-          ╚═╝      ╚═╝   ╚═════╝ ╚══════╝ v1.2
+          ╚═╝      ╚═╝   ╚═════╝ ╚══════╝ v1.3
           
        [*] YouTube Video Downloader          
        [*] Created by: Rofi (Fixploit03)     
@@ -45,7 +45,7 @@ def show_banner() -> None:
         print(banner)
     except UnicodeEncodeError:
         print("[*] Basic banner display due to encoding issues:")
-        print("YouTube Video Downloader v1.2 by Rofi (Fixploit03)")
+        print("YouTube Video Downloader v1.3 by Rofi (Fixploit03)")
     except Exception as e:
         logging.error(f"Banner display failed: {str(e)}")
         print("[-] Banner display failed")
