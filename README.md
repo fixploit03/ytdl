@@ -1,4 +1,7 @@
-# YTDL
+<div align="center">
+  <img src="https://github.com/fixploit03/ytdl/blob/main/youtube.png" width=35%/>
+  <h1>YTDL</h1>
+</div>
 
 Program python sederhana untuk mendownload video dari Youtube.
 
