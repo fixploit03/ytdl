@@ -1,3 +1,10 @@
+![Python](https://img.shields.io/badge/Python-3.x-blue?style=flat&logo=python)
+![Platform](https://img.shields.io/badge/Platform-All-lightgreen?style=flat)
+[![License](https://img.shields.io/badge/License-MIT-blue?style=flat)](https://opensource.org/licenses/MIT)
+![Forks](https://img.shields.io/github/forks/fixploit03/ytdl?style=flat&color=green)
+![Stars](https://img.shields.io/github/stars/fixploit03/ytdl?style=flat&color=green)
+[![Saweria](https://img.shields.io/badge/Support-Me-yellow?style=flat&logo=coffee)](https://saweria.co/fixploit03)
+
 <div align="center">
   <img src="https://github.com/fixploit03/ytdl/blob/main/youtube.png" width=35%/>
   <h1>YTDL</h1>
