@@ -22,6 +22,8 @@ $ pkg install ffmpeg
 $ pkg install git
 $ git clone https://github.com/fixploit03/ytdl.git
 $ cd ytdl
+$ python3 -m venv .modules
+$ source .modules/bin/activate
 $ pip3 install yt-dlp
 ```
 
@@ -38,6 +40,8 @@ Buka CMD dan ketikkan printah dibawah ini:
 ```
 $ git clone https://github.com/fixploit03/ytdl.git
 $ cd ytdl
+$ python -m venv .modules
+$ source .modules/bin/activate
 $ pip3 install yt-dlp
 ```
 
@@ -61,8 +65,12 @@ $ pip3 install yt-dlp
 
 ## Run
 
-> Kalo di Windows ga usah pake angka 3 langsung aja `python ytdl.py`
+Pastikan berada di dalam folder yang berisi file `ytdl.py`, dan pastikan `venv` atau virtual environmentnya diaktifkan dulu sebelum menjalankan program dengan mengetikkan `source .modules/bin/activate`.
+
+Untuk menjalankan programnya ketikkan perintah dibawah ini:
 
 ```
 python3 ytdl.py
 ```
+
+> Kalo di Windows ga usah pake angka 3 langsung aja `python ytdl.py`
