@@ -34,7 +34,7 @@ $ git clone https://github.com/fixploit03/ytdl.git
 $ cd ytdl
 $ python3 -m venv .modules
 $ source .modules/bin/activate
-$ pip3 install yt-dlp
+$ pip3 install -r requirements.txt
 ```
 
 ### 2. Windows
@@ -52,7 +52,7 @@ $ git clone https://github.com/fixploit03/ytdl.git
 $ cd ytdl
 $ python -m venv .modules
 $ .modules\Scripts\activate.bat
-$ pip3 install yt-dlp
+$ pip3 install -r requirements.txt
 ```
 
 ### 3. Linux (Ubuntu/Debian)
@@ -70,7 +70,7 @@ $ git clone https://github.com/fixploit03/ytdl.git
 $ cd ytdl
 $ python3 -m venv .modules
 $ source .modules/bin/activate
-$ pip3 install yt-dlp
+$ pip3 install -r requirements.txt
 ```
 
 ## Run
