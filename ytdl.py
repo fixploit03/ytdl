@@ -74,9 +74,17 @@ def get_valid_input(prompt: str, validator_func=None) -> str:
             print(f"[-] Input error occurred: {str(e)}")
 
 def is_valid_url(url: str) -> bool:
-    """Validate URL format."""
+    """Validate if the URL is a valid YouTube URL."""
     try:
-        return url.startswith(("http://", "https://")) and "." in url
+        # Check if it starts with http:// or https:// and contains a dot
+        if not (url.startswith(("http://", "https://")) and "." in url):
+            return False
+        # Check if it's a YouTube URL
+        youtube_domains = ["youtube.com", "youtu.be"]
+        if not any(domain in url.lower() for domain in youtube_domains):
+            print("[-] Error: URL must be a YouTube URL (e.g., youtube.com or youtu.be)")
+            return False
+        return True
     except AttributeError:
         return False
 
@@ -110,7 +118,8 @@ def check_ffmpeg() -> bool:
         return False
 
 def get_video_formats(yt_url: str) -> Optional[List[List[str]]]:
-    """Get available video formats."""
+    """Get all available video formats (mp4) with best quality per resolution, including audio."""
+    print("[*] Fetching video resolutions...")  # Indicate that resolution fetching is in progress
     try:
         ydl_opts = {
             'quiet': True,
@@ -123,22 +132,60 @@ def get_video_formats(yt_url: str) -> Optional[List[List[str]]]:
             
         if not formats:
             raise ValueError("No formats available")
-            
-        table_data = []
+
+        # Dictionary to store the best video formats by resolution
+        video_dict = {}
+        # Find the best audio in mp4
+        best_audio = None
+        
         for f in formats:
             try:
-                table_data.append([
-                    f.get('format_id', 'N/A'),
-                    f.get('resolution', f'{f.get("height", "N/A")}p' if f.get('height') else 'audio only'),
-                    f.get('ext', 'N/A'),
-                    f.get('vcodec', 'N/A'),
-                    f.get('acodec', 'N/A'),
-                    f"{round(f.get('filesize', 0) / (1024 * 1024), 2)} MB" if f.get('filesize') else 'N/A',
-                    f.get('format_note', 'N/A')
-                ])
+                resolution = f'{f.get("height", "N/A")}p' if f.get('height') else 'N/A'
+                filesize = f.get('filesize', 0) or 0
+                format_id = f.get('format_id', 'N/A')
+                
+                # Filter mp4 video formats (with or without audio)
+                if f.get('ext') == 'mp4' and f.get('vcodec') != 'none':
+                    if (resolution not in video_dict or 
+                        filesize > video_dict[resolution]['filesize']):
+                        video_dict[resolution] = {
+                            'format_id': format_id,
+                            'resolution': resolution,
+                            'filesize': filesize,
+                            'has_audio': f.get('acodec') != 'none'
+                        }
+                # Filter the best mp4 audio
+                elif f.get('ext') == 'mp4' and f.get('acodec') != 'none' and f.get('vcodec') == 'none':
+                    if not best_audio or filesize > best_audio['filesize']:
+                        best_audio = {
+                            'format_id': format_id,
+                            'filesize': filesize,
+                        }
             except (TypeError, ValueError) as e:
                 logging.warning(f"Format parsing error: {str(e)}")
-        return table_data
+                continue
+
+        # Combine video with the best audio if needed
+        table_data = []
+        audio_id = best_audio['format_id'] if best_audio else 'bestaudio[ext=mp4]'
+        for data in video_dict.values():
+            if data['resolution'] != 'N/A':
+                # If the video already has audio, use it directly
+                if data['has_audio']:
+                    combined_format_id = data['format_id']
+                else:
+                    # Otherwise, combine with the best audio
+                    combined_format_id = f"{data['format_id']}+{audio_id}"
+                table_data.append([
+                    combined_format_id,
+                    data['resolution'],
+                    f"{round(data['filesize'] / (1024 * 1024), 2)} MB" if data['filesize'] else 'N/A',
+                ])
+        
+        # Sort by resolution (highest to lowest)
+        table_data.sort(key=lambda x: int(x[1][:-1]), reverse=True)
+        return table_data if table_data else None
+
     except yt_dlp.utils.DownloadError as e:
         logging.error(f"Download error getting formats: {str(e)}")
         print(f"[-] Failed to get formats: {str(e)}")
@@ -152,7 +199,7 @@ def download_video(yt_url: str, save_location: str, format_id: str = 'best') -> 
     """Download video with specified format."""
     try:
         ydl_opts = {
-            'format': 'bestvideo+bestaudio/best' if format_id == 'best' else format_id,
+            'format': 'bestvideo[ext=mp4]+bestaudio[ext=mp4]/best[ext=mp4]' if format_id == 'best' else format_id,
             'outtmpl': os.path.join(save_location, '%(title)s.%(ext)s'),
             'merge_output_format': 'mp4',
             'socket_timeout': 30,
@@ -194,9 +241,10 @@ def main() -> None:
         else:
             formats = get_video_formats(yt_url)
             if not formats:
+                print("[-] No suitable mp4 formats found")
                 sys.exit(1)
-                
-            print(tabulate(formats, headers=["ID", "Resolution", "Ext", "VCodec", "ACodec", "Size", "Note"], 
+            print("[+] Video resolutions found:")  # Indicate that resolutions have been found
+            print(tabulate(formats, headers=["ID", "Resolution", "File Size"], 
                          tablefmt="pretty"))
             valid_ids = [row[0] for row in formats]
             format_id = get_valid_input("[#] Enter video ID: ", 
