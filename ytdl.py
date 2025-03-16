@@ -5,6 +5,7 @@ import platform
 from tabulate import tabulate
 from typing import List, Optional
 import logging
+import shutil
 
 # Setup logging
 logging.basicConfig(
@@ -32,7 +33,13 @@ banner = """
 """
 
 def clear_screen() -> None:
-    """Clear the terminal screen based on OS."""
+    """
+    Clears the terminal screen based on the operating system.
+
+    Notes:
+        - Uses 'cls' for Windows and 'clear' for Linux/Unix.
+        - Handles errors if screen clearing fails.
+    """
     try:
         os.system("cls" if platform.system() == "Windows" else "clear")
     except Exception as e:
@@ -40,7 +47,13 @@ def clear_screen() -> None:
         print("[-] Screen clearing failed, continuing execution...")
 
 def show_banner() -> None:
-    """Display program banner."""
+    """
+    Displays the program's ASCII art banner.
+
+    Notes:
+        - Handles Unicode encoding issues with a simple fallback.
+        - Logs errors if banner display fails.
+    """
     try:
         print(banner)
     except UnicodeEncodeError:
@@ -51,7 +64,19 @@ def show_banner() -> None:
         print("[-] Banner display failed")
 
 def get_valid_input(prompt: str, validator_func=None) -> str:
-    """Get validated user input with error handling."""
+    """
+    Gets validated user input with optional validation.
+
+    Args:
+        prompt (str): Message displayed to request input.
+        validator_func (callable, optional): Function to validate input.
+
+    Returns:
+        str: Validated user input.
+
+    Raises:
+        SystemExit: If the user terminates the program with Ctrl+C.
+    """
     while True:
         try:
             value = input(prompt).strip()
@@ -74,12 +99,18 @@ def get_valid_input(prompt: str, validator_func=None) -> str:
             print(f"[-] Input error occurred: {str(e)}")
 
 def is_valid_url(url: str) -> bool:
-    """Validate if the URL is a valid YouTube URL."""
+    """
+    Validates if the URL is a valid YouTube URL.
+
+    Args:
+        url (str): URL to validate.
+
+    Returns:
+        bool: True if the URL is valid, False otherwise.
+    """
     try:
-        # Check if it starts with http:// or https:// and contains a dot
         if not (url.startswith(("http://", "https://")) and "." in url):
             return False
-        # Check if it's a YouTube URL
         youtube_domains = ["youtube.com", "youtu.be"]
         if not any(domain in url.lower() for domain in youtube_domains):
             print("[-] Error: URL must be a YouTube URL (e.g., youtube.com or youtu.be)")
@@ -89,14 +120,29 @@ def is_valid_url(url: str) -> bool:
         return False
 
 def is_valid_location(location: str) -> bool:
-    """Validate save location."""
+    """
+    Validates the save location for both Windows and Linux.
+
+    Args:
+        location (str): File save location path.
+
+    Returns:
+        bool: True if the location is valid and writable, False otherwise.
+    """
     try:
         location = os.path.abspath(location)
-        if not os.path.exists(os.path.dirname(location) or location):
-            print(f"[-] Directory doesn't exist: {location}")
-            return False
-        if not os.access(os.path.dirname(location) or location, os.W_OK):
-            print(f"[-] No write permission: {location}")
+        dir_path = os.path.dirname(location) or location
+        
+        if not os.path.exists(dir_path):
+            try:
+                os.makedirs(dir_path, exist_ok=True)
+                logging.info(f"Created directory: {dir_path}")
+            except OSError as e:
+                print(f"[-] Cannot create directory {dir_path}: {str(e)}")
+                return False
+        
+        if not os.access(dir_path, os.W_OK):
+            print(f"[-] No write permission: {dir_path}")
             return False
         return True
     except OSError as e:
@@ -105,21 +151,38 @@ def is_valid_location(location: str) -> bool:
         return False
 
 def check_ffmpeg() -> bool:
-    """Check FFmpeg installation."""
+    """
+    Checks if FFmpeg is installed and available in the system PATH.
+
+    Returns:
+        bool: True if FFmpeg is found, False otherwise.
+
+    Notes:
+        - Uses shutil.which for more robust detection.
+    """
     try:
-        cmd = "ffmpeg -version >nul 2>&1" if platform.system() == "Windows" else "ffmpeg -version >/dev/null 2>&1"
-        result = os.system(cmd)
-        if result != 0:
-            raise EnvironmentError("FFmpeg not found")
+        ffmpeg_path = shutil.which("ffmpeg")
+        if ffmpeg_path is None:
+            raise EnvironmentError("FFmpeg not found in PATH")
+        logging.info(f"FFmpeg found at: {ffmpeg_path}")
         return True
     except Exception as e:
         logging.error(f"FFmpeg check failed: {str(e)}")
         print(f"[-] FFmpeg check failed: {str(e)}")
+        print("[-] Please install FFmpeg and ensure it's in your system PATH")
         return False
 
 def get_video_formats(yt_url: str) -> Optional[List[List[str]]]:
-    """Get all available video formats (mp4) with best quality per resolution, including audio."""
-    print("[*] Fetching video resolutions...")  # Indicate that resolution fetching is in progress
+    """
+    Retrieves all available MP4 video formats with the best quality per resolution.
+
+    Args:
+        yt_url (str): YouTube URL to analyze.
+
+    Returns:
+        Optional[List[List[str]]]: List of formats (ID, resolution, file size) or None if failed.
+    """
+    print("[*] Fetching video resolutions...")
     try:
         ydl_opts = {
             'quiet': True,
@@ -133,9 +196,7 @@ def get_video_formats(yt_url: str) -> Optional[List[List[str]]]:
         if not formats:
             raise ValueError("No formats available")
 
-        # Dictionary to store the best video formats by resolution
         video_dict = {}
-        # Find the best audio in mp4
         best_audio = None
         
         for f in formats:
@@ -144,7 +205,6 @@ def get_video_formats(yt_url: str) -> Optional[List[List[str]]]:
                 filesize = f.get('filesize', 0) or 0
                 format_id = f.get('format_id', 'N/A')
                 
-                # Filter mp4 video formats (with or without audio)
                 if f.get('ext') == 'mp4' and f.get('vcodec') != 'none':
                     if (resolution not in video_dict or 
                         filesize > video_dict[resolution]['filesize']):
@@ -154,7 +214,6 @@ def get_video_formats(yt_url: str) -> Optional[List[List[str]]]:
                             'filesize': filesize,
                             'has_audio': f.get('acodec') != 'none'
                         }
-                # Filter the best mp4 audio
                 elif f.get('ext') == 'mp4' and f.get('acodec') != 'none' and f.get('vcodec') == 'none':
                     if not best_audio or filesize > best_audio['filesize']:
                         best_audio = {
@@ -165,16 +224,13 @@ def get_video_formats(yt_url: str) -> Optional[List[List[str]]]:
                 logging.warning(f"Format parsing error: {str(e)}")
                 continue
 
-        # Combine video with the best audio if needed
         table_data = []
         audio_id = best_audio['format_id'] if best_audio else 'bestaudio[ext=mp4]'
         for data in video_dict.values():
             if data['resolution'] != 'N/A':
-                # If the video already has audio, use it directly
                 if data['has_audio']:
                     combined_format_id = data['format_id']
                 else:
-                    # Otherwise, combine with the best audio
                     combined_format_id = f"{data['format_id']}+{audio_id}"
                 table_data.append([
                     combined_format_id,
@@ -182,7 +238,6 @@ def get_video_formats(yt_url: str) -> Optional[List[List[str]]]:
                     f"{round(data['filesize'] / (1024 * 1024), 2)} MB" if data['filesize'] else 'N/A',
                 ])
         
-        # Sort by resolution (highest to lowest)
         table_data.sort(key=lambda x: int(x[1][:-1]), reverse=True)
         return table_data if table_data else None
 
@@ -196,8 +251,19 @@ def get_video_formats(yt_url: str) -> Optional[List[List[str]]]:
         return None
 
 def download_video(yt_url: str, save_location: str, format_id: str = 'best') -> bool:
-    """Download video with specified format."""
+    """
+    Downloads a video with the specified format.
+
+    Args:
+        yt_url (str): YouTube URL to download.
+        save_location (str): File save location.
+        format_id (str): Video format ID, default is 'best'.
+
+    Returns:
+        bool: True if download succeeds, False otherwise.
+    """
     try:
+        save_location = os.path.abspath(save_location)
         ydl_opts = {
             'format': 'bestvideo[ext=mp4]+bestaudio[ext=mp4]/best[ext=mp4]' if format_id == 'best' else format_id,
             'outtmpl': os.path.join(save_location, '%(title)s.%(ext)s'),
@@ -221,7 +287,13 @@ def download_video(yt_url: str, save_location: str, format_id: str = 'best') -> 
         return False
 
 def main() -> None:
-    """Main program execution."""
+    """
+    Main execution of the YouTube Video Downloader program.
+
+    Notes:
+        - Checks for FFmpeg, prompts for URL and location, then downloads the video.
+        - Offers a choice between best resolution or manual selection.
+    """
     try:
         clear_screen()
         show_banner()
@@ -233,7 +305,7 @@ def main() -> None:
         yt_url = get_valid_input("[#] Enter YouTube URL: ", is_valid_url)
         save_location = get_valid_input("[#] Enter save location: ", is_valid_location)
         
-        choice = get_valid_input("[?] Best resolution (y/n): ", 
+        choice = get_valid_input("[?] Use best resolution (y/n): ", 
                                lambda x: x.lower() in ['y', 'n']).lower()
         
         if choice == 'y':
@@ -241,13 +313,13 @@ def main() -> None:
         else:
             formats = get_video_formats(yt_url)
             if not formats:
-                print("[-] No suitable mp4 formats found")
+                print("[-] No suitable MP4 formats found")
                 sys.exit(1)
-            print("[+] Video resolutions found:")  # Indicate that resolutions have been found
+            print("[+] Available video resolutions:")
             print(tabulate(formats, headers=["ID", "Resolution", "File Size"], 
                          tablefmt="pretty"))
             valid_ids = [row[0] for row in formats]
-            format_id = get_valid_input("[#] Enter video ID: ", 
+            format_id = get_valid_input("[#] Enter video format ID: ", 
                                       lambda x: x in valid_ids)
             success = download_video(yt_url, save_location, format_id)
             
