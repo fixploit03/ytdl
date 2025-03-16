@@ -97,4 +97,4 @@ Link: [https://youtu.be/nOCxZs9HdjQ?si=EDMK8xyoBnH03up_](https://youtu.be/nOCxZs
 
 ## Lisensi 
 
-Program ini dilisensikan di bawah [lisensi MIT]().
+Program ini dilisensikan di bawah [lisensi MIT](https://github.com/fixploit03/ytdl/blob/main/LICENSE).
