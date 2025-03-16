@@ -23,6 +23,7 @@ banner = """
          ╚██╔╝     ██║   ██║  ██║██║
           ██║      ██║   ██████╔╝███████╗
           ╚═╝      ╚═╝   ╚═════╝ ╚══════╝ v1.2
+          
        [*] YouTube Video Downloader          
        [*] Created by: Rofi (Fixploit03)     
        [*] Github: https://github.com/fixploit03/ytdl       
