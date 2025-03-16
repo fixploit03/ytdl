@@ -93,7 +93,7 @@ Link: [https://youtu.be/nOCxZs9HdjQ?si=EDMK8xyoBnH03up_](https://youtu.be/nOCxZs
 
 ## Info
 
-> Jika program tidak digunakan lagi, nonaktifkan venv atau virtual environment dengan mengetikkan perintah deactivate. Khusus di Windows, gunakan perintah .modules\Scripts\deactivate.bat.
+> Jika program tidak digunakan lagi, nonaktifkan venv atau virtual environment dengan mengetikkan perintah `deactivate`. Khusus di Windows, gunakan perintah `.modules\Scripts\deactivate.bat`.
 
 ## Lisensi 
 
