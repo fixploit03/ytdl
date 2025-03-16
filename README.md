@@ -1,6 +1,6 @@
-![Python](https://img.shields.io/badge/Python-3.x-blue?style=flat&logo=python)
+[![Python](https://img.shields.io/badge/Python-3.x-blue?style=flat&logo=python)](https://www.python.org/)
 ![Platform](https://img.shields.io/badge/Platform-All-lightgreen?style=flat)
-[![License](https://img.shields.io/badge/License-MIT-blue?style=flat)](https://opensource.org/licenses/MIT)
+[![License](https://img.shields.io/badge/License-MIT-blue?style=flat)](https://github.com/fixploit03/ytdl/blob/main/LICENSE)
 ![Forks](https://img.shields.io/github/forks/fixploit03/ytdl?style=flat&color=green)
 ![Stars](https://img.shields.io/github/stars/fixploit03/ytdl?style=flat&color=green)
 [![Saweria](https://img.shields.io/badge/Support-Me-yellow?style=flat&logo=coffee)](https://saweria.co/fixploit03)
