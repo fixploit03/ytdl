@@ -41,7 +41,7 @@ Buka CMD dan ketikkan printah dibawah ini:
 $ git clone https://github.com/fixploit03/ytdl.git
 $ cd ytdl
 $ python -m venv .modules
-$ source .modules/bin/activate
+$ .modules\Scripts\activate.bat
 $ pip3 install yt-dlp
 ```
 
