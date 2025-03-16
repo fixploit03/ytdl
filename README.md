@@ -1,5 +1,6 @@
 [![Python](https://img.shields.io/badge/Python-3.x-blue?style=flat&logo=python)](https://www.python.org/)
 ![Platform](https://img.shields.io/badge/Platform-All-lightgreen?style=flat)
+[![Latest Version](https://img.shields.io/github/v/release/fixploit03/ytdl?style=flat&color=blue)](https://github.com/fixploit03/ytdl/releases)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=flat)](https://github.com/fixploit03/ytdl/blob/main/LICENSE)
 ![Forks](https://img.shields.io/github/forks/fixploit03/ytdl?style=flat&color=green)
 ![Stars](https://img.shields.io/github/stars/fixploit03/ytdl?style=flat&color=green)
