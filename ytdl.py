@@ -502,18 +502,16 @@ def show_support_message() -> None:
     try:
         clear_screen()
         show_banner()
-        print("""
-        [*] Support the Developer:
-        --------------------------
+        print("""       [*] Support the Developer:
+       --------------------------
+       Thank you for using this program! If you find it helpful, please consider supporting me:
         
-        Thank you for using this program! If you find it helpful, please consider supporting me:
+       - GitHub: https://github.com/fixploit03
+       - Donation: https://saweria.co/fixploit03
         
-        - GitHub: https://github.com/fixploit03
-        - Donation: https://saweria.co/fixploit03
-        
-        Your support is greatly appreciated!
+       Your support is greatly appreciated!
         """)
-        input("[*] Press Enter to return to the menu...")
+        input("Press Enter to return to the menu...")
     except Exception as e:
         logger.error(f"Error displaying support message: {e}")
         print(f"[-] Error displaying support message: {e}")
@@ -538,7 +536,7 @@ def main() -> None:
 
             # Display menu
             print("       [*] Select download mode:")
-            print("       -------------------------\n")
+            print("       -------------------------")
             print("       0. Support Developer")
             print("       1. Single URL")
             print("       2. List of URLs from file")
