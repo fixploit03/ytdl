@@ -511,7 +511,7 @@ def show_support_message() -> None:
         
        Your support is greatly appreciated!
         """)
-        input("Press Enter to return to the menu...")
+        input("[*] Press Enter to return to the menu...")
     except Exception as e:
         logger.error(f"Error displaying support message: {e}")
         print(f"[-] Error displaying support message: {e}")
