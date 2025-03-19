@@ -90,7 +90,7 @@ python3 ytdl.py
 
 Untuk video demonstrasinya ada di YT.
 
-Link: [https://youtu.be/nOCxZs9HdjQ?si=EDMK8xyoBnH03up_](https://youtu.be/nOCxZs9HdjQ?si=EDMK8xyoBnH03up_)
+Link: [https://youtu.be/GbuaQsRd6FU?si=O_Oq6Oi7Gmj05j5Z](https://youtu.be/GbuaQsRd6FU?si=O_Oq6Oi7Gmj05j5Z)
 
 ## Info
 
