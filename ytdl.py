@@ -139,32 +139,16 @@ def is_valid_location(location: str) -> bool:
         sys.exit(0)
 
 def check_ffmpeg() -> bool:
-    """Checks if FFmpeg is installed and provides OS-specific installation instructions."""
+    """Checks if FFmpeg is installed."""
     try:
         ffmpeg_path = shutil.which("ffmpeg")
         if ffmpeg_path is None:
-            raise EnvironmentError("FFmpeg not found in system PATH")
-        return True  # No output if FFmpeg is found
-    except EnvironmentError:
-        if platform.system() == "Windows":
-            print("[-] FFmpeg not found in your system PATH.")
-            print("[!] To install FFmpeg on Windows:")
-            print("    1. Download FFmpeg from https://ffmpeg.org/download.html")
-            print("    2. Extract the ZIP file to a folder (e.g., C:\\ffmpeg)")
-            print("    3. Add the 'bin' folder to your PATH (e.g., C:\\ffmpeg\\bin)")
-            print("    4. Restart your terminal and try again")
-        else:  # Assuming Linux or Unix-like system
-            print("[-] FFmpeg not found in your system PATH.")
-            print("[!] To install FFmpeg on Linux:")
-            print("    - On Ubuntu/Debian: Run 'sudo apt update && sudo apt install ffmpeg'")
-            print("    - On Fedora: Run 'sudo dnf install ffmpeg'")
-            print("    - On Arch: Run 'sudo pacman -S ffmpeg'")
-            print("    - After installation, verify with 'ffmpeg -version'")
-        print("[!] Exiting due to missing FFmpeg.")
-        sys.exit(1)
+            print("[-] FFmpeg is not installed. Please install it first. Exiting...")
+            sys.exit(1)
+        return True
     except Exception as e:
         print(f"[-] Error checking FFmpeg: {e}")
-        return False
+        sys.exit(1)
     except KeyboardInterrupt:
         print("\n[-] Program interrupted by user")
         sys.exit(0)
@@ -376,7 +360,7 @@ def download_playlist(playlist_url: str, save_location: str, max_retries: int = 
                 return True
             except yt_dlp.utils.DownloadError as e:
                 attempt += 1
-                print(f"[-] Playlist download attempt {attempt}/{max_retries} failed: covered{e}")
+                print(f"[-] Playlist download attempt {attempt}/{max_retries} failed: {e}")
                 if attempt < max_retries:
                     print("[*] Retrying in 5 seconds...")
                     time.sleep(5)
@@ -424,7 +408,7 @@ def main() -> None:
             show_banner()
 
             if not check_ffmpeg():
-                sys.exit(1)  # Exit after OS-specific FFmpeg error message
+                sys.exit(1)
 
             print("       [*] Select download mode:")
             print("       -------------------------")
