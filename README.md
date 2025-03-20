@@ -15,7 +15,7 @@ Program python sederhana untuk mendownload video dari Youtube.
 
 ## Screenshot
 
-![](https://github.com/fixploit03/ytdl/blob/main/img/ytdl.PNG)
+![](https://github.com/fixploit03/ytdl/blob/main/img/ytdl_screenshot.PNG)
 
 ## Persyaratan
 
