@@ -22,6 +22,7 @@ class DownloadMode(Enum):
 class DownloadWorker(QThread):
     progress = pyqtSignal(str)
     finished = pyqtSignal(bool)
+    percentage = pyqtSignal(int)  # Sinyal untuk persentase progress bar
     _mutex = QMutex()
     
     def __init__(self, mode: DownloadMode, url_or_file: str, save_location: str, format_id: str = 'best'):
@@ -31,7 +32,7 @@ class DownloadWorker(QThread):
         self.save_location = save_location
         self.format_id = format_id
         self._running = True
-        self.last_progress_message = ""  # To filter duplicate progress messages
+        self.last_progress_message = ""
     
     def run(self):
         try:
@@ -71,16 +72,15 @@ class DownloadWorker(QThread):
             if not self._running:
                 return
             if d['status'] == 'downloading':
-                percent = d.get('_percent_str', '0%').strip()
-                speed = d.get('_speed_str', 'N/A').strip()
-                eta = d.get('_eta_str', 'N/A').strip()
-                message = f"Downloading: {percent} - Speed: {speed} - ETA: {eta}"
-                if message != self.last_progress_message:
-                    self.progress.emit(message)
-                    self.last_progress_message = message
+                percent = d.get('_percent_str', '0%').strip('%')
+                try:
+                    self.percentage.emit(int(float(percent)))  # Kirim persentase ke progress bar
+                except ValueError:
+                    pass
             elif d['status'] == 'finished':
                 self.progress.emit("Download completed successfully!")
                 self.progress.emit(f"File saved to: {self.save_location}")
+                self.percentage.emit(100)
         except KeyError as e:
             self.progress.emit(f"Error updating progress: Missing key '{str(e)}'. Please try again.")
     
@@ -236,7 +236,11 @@ class YTDLWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("YTDL v2.0")
-        self.setFixedSize(900, 550)
+        self.resize(900, 550)
+        self.setMinimumSize(600, 400)
+        self.setStyleSheet("QWidget { font-size: 14pt; }")
+        self.update_window_title()
+        
         try:
             self.setWindowIcon(QIcon('icon/ytdl.ico'))
         except Exception as e:
@@ -285,6 +289,15 @@ class YTDLWindow(QMainWindow):
         except Exception as e:
             QMessageBox.critical(self, "Initialization Error", f"Failed to initialize application: {str(e)}")
             sys.exit(1)
+    
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.update_window_title()
+    
+    def update_window_title(self):
+        width = self.width()
+        height = self.height()
+        self.setWindowTitle(f"YTDL v2.0 - {width}x{height}")
     
     def center_window(self):
         screen = QDesktopWidget().screenGeometry()
@@ -569,12 +582,14 @@ class YTDLWindow(QMainWindow):
                 return
                 
             format_id = self.format_combo.currentData() if mode == DownloadMode.SINGLE else "best"
-            self.append_log(f"Starting {mode.value} download... Format: '{self.format_combo.currentText() if mode == DownloadMode.SINGLE else 'Best Quality'}'")
+            format_text = self.format_combo.currentText() if mode == DownloadMode.SINGLE else "Best Quality"
+            self.append_log(f"Starting {mode.value} download.... Format: {format_text}")
             
             button.setEnabled(False)
             self.progress_bar.setValue(0)
             self.worker = DownloadWorker(mode, url_or_file, save_location, format_id)
             self.worker.progress.connect(self.update_progress)
+            self.worker.percentage.connect(self.update_progress_bar)
             self.worker.finished.connect(lambda success: self.download_finished(success, button))
             self.worker.start()
         except Exception as e:
@@ -609,25 +624,15 @@ class YTDLWindow(QMainWindow):
     
     def update_progress(self, message: str):
         try:
-            if "Downloading:" in message:
-                parts = message.split(" - ")
-                if len(parts) >= 1:
-                    percent_str = parts[0].split(": ")[1].strip("%")
-                    try:
-                        percent = float(percent_str)
-                        self.progress_bar.setValue(int(percent))
-                        self.append_log(message)
-                    except ValueError as e:
-                        self.append_log(f"Error parsing progress percentage '{percent_str}': {str(e)}")
-                else:
-                    self.append_log(f"Unexpected progress message format: '{message}'")
-            elif "Download completed successfully!" in message:
+            if "Download completed successfully!" in message:
                 self.append_log(message)
-                self.progress_bar.setValue(100)
-            else:
+            elif "Downloading:" not in message:
                 self.append_log(message)
         except Exception as e:
             self.append_log(f"Unexpected error updating progress: {str(e)}. Please try again.")
+    
+    def update_progress_bar(self, percent: int):
+        self.progress_bar.setValue(percent)
     
     def download_finished(self, success: bool, button: QPushButton):
         try:
