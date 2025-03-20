@@ -7,15 +7,15 @@
 [![Saweria](https://img.shields.io/badge/Support-Me-yellow?style=flat&logo=coffee)](https://saweria.co/fixploit03)
 
 <div align="center">
-  <img src="https://github.com/fixploit03/ytdl/blob/main/youtube.png" width=35%/>
+  <img src="https://github.com/fixploit03/ytdl/blob/main/img/youtube.png" width=35%/>
   <h1>YTDL</h1>
 </div>
+
+Program python sederhana untuk mendownload video dari Youtube.
 
 ## Screenshot
 
 ![](https://github.com/fixploit03/ytdl/blob/main/img/ytdl.PNG)
-
-Program python sederhana untuk mendownload video dari Youtube.
 
 ## Persyaratan
 
