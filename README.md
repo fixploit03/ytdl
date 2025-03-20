@@ -13,9 +13,7 @@
 
 ## Screenshot
 
-<div align="center">
-  <img src="https://github.com/fixploit03/ytdl/blob/main/youtube.png" width=35%/>
-</div>
+![](https://github.com/fixploit03/ytdl/blob/main/img/ytdl.PNG)
 
 Program python sederhana untuk mendownload video dari Youtube.
 
