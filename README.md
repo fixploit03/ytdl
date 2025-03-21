@@ -19,7 +19,9 @@ Program python sederhana untuk mendownload video dari Youtube.
 
 ## Dokumentasi
 
-- [Demonstrasi]()
+- [Demonstrasi](https://youtu.be/n2oV76k0jwI?si=Uhyn-X2PHKf_YPoI)
 - [Cara Instal](https://github.com/fixploit03/ytdl/blob/main/doc/INSTAL.md)
 - [Cara Menjalankan](https://github.com/fixploit03/ytdl/blob/main/doc/RUN.md)
 - [Lisensi](https://github.com/fixploit03/ytdl/blob/main/LICENSE)
+
+> Jika ada pertanyaan terkait cara instalasi, error, atau hal lainnya terkait program, silakan tanyakan di sini: [https://github.com/fixploit03/ytdl/issues](https://github.com/fixploit03/ytdl/issues)
